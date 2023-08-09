@@ -24,19 +24,19 @@ internal class Program
 
     #region Models
     private static Cube lightCube = null!;
-    private static Cube lightingCube = null!;
+    private static Cube cube1 = null!;
     #endregion
 
     #region Positions
     private static Vector3D<float> lightPos = new(1.4f, 1.2f, -2.0f);
-    private static Vector3D<float> lightingPos = new(0.0f, -1.0f, -1.5f);
+    private static Vector3D<float> cube1Pos = new(0.0f, -1.0f, -1.5f);
     #endregion
 
     #region Programs
     // 光源
     private static ShaderProgram lightProgram = null!;
 
-    // 进行光照
+    // 场景内物体光照
     private static ShaderProgram lightingProgram = null!;
     #endregion
 
@@ -65,7 +65,7 @@ internal class Program
         keyboard = inputContext.Keyboards[0];
 
         lightCube = new Cube(gl);
-        lightingCube = new Cube(gl);
+        cube1 = new Cube(gl);
 
         using Shader mvp = new(gl, GLEnum.VertexShader, File.ReadAllText("Shaders/mvp.vert"));
         using Shader light = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/light.frag"));
@@ -143,7 +143,7 @@ internal class Program
         camera.Height = window.Size.Y;
 
         lightCube.Transform = Matrix4X4.CreateScale(0.2f) * Matrix4X4.CreateTranslation(lightPos);
-        lightingCube.Transform = Matrix4X4.CreateTranslation(lightingPos);
+        cube1.Transform = Matrix4X4.CreateTranslation(cube1Pos);
     }
 
     private static void Window_Render(double obj)
@@ -182,7 +182,7 @@ internal class Program
 
             lightingProgram.Enable();
 
-            lightingProgram.SetUniform("model", lightingCube.Transform);
+            lightingProgram.SetUniform("model", cube1.Transform);
             lightingProgram.SetUniform("view", camera.View);
             lightingProgram.SetUniform("projection", camera.Projection);
 
@@ -191,7 +191,7 @@ internal class Program
             lightingProgram.SetUniform("lightPos", lightPos);
             lightingProgram.SetUniform("viewPos", camera.Position);
 
-            lightingCube.Draw(positionAttrib, normalAttrib);
+            cube1.Draw(positionAttrib, normalAttrib);
 
             lightingProgram.Disable();
 
