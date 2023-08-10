@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Numerics;
 using Plane = Core.Models.Plane;
 using Shader = Core.Helpers.Shader;
+using Texture = Core.Helpers.Texture;
 
 namespace Examples;
 
@@ -57,6 +58,13 @@ internal class Program
     private static ShaderProgram lightingProgram = null!;
     #endregion
 
+    #region Textures
+    private static Texture planeDiffuseMap = null!;
+    private static Texture planeSpecularMap = null!;
+    private static Texture cubeDiffuseMap = null!;
+    private static Texture cubeSpecularMap = null!;
+    #endregion
+
     static void Main(string[] args)
     {
         _ = args;
@@ -100,13 +108,25 @@ internal class Program
         lightingProgram = new ShaderProgram(gl);
         lightingProgram.Attach(mvp, lighting);
 
+        planeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
+        planeDiffuseMap.WriteColor(MaterialsHelper.WhitePlastic.Diffuse);
+
+        planeSpecularMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
+        planeSpecularMap.WriteColor(MaterialsHelper.WhitePlastic.Specular);
+
+        cubeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
+        cubeDiffuseMap.WriteImage("container2.png");
+
+        cubeSpecularMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
+        cubeSpecularMap.WriteImage("container2_specular.png");
+
         gl.Enable(GLEnum.DepthTest);
         gl.ClearColor(Color.Black);
     }
 
     private static void Window_Update(double obj)
     {
-        if (mouse.IsButtonPressed(MouseButton.Right))
+        if (mouse.IsButtonPressed(MouseButton.Middle))
         {
             Vector2D<float> vector = new(mouse.Position.X, mouse.Position.Y);
 
@@ -180,10 +200,8 @@ internal class Program
         // 光源
         {
             uint positionAttrib = (uint)lightProgram.GetAttrib("position");
-            uint normalAttrib = (uint)lightProgram.GetAttrib("normal");
 
             gl.EnableVertexAttribArray(positionAttrib);
-            gl.EnableVertexAttribArray(normalAttrib);
 
             lightProgram.Enable();
 
@@ -193,24 +211,34 @@ internal class Program
 
             lightProgram.SetUniform("color", lightColor);
 
-            lightCube.Draw(positionAttrib, normalAttrib);
+            lightCube.Draw(positionAttrib);
 
             lightProgram.Disable();
 
-            gl.DisableVertexAttribArray(normalAttrib);
             gl.DisableVertexAttribArray(positionAttrib);
         }
 
         // 场景内物体
         {
+            gl.ActiveTexture(TextureUnit.Texture0);
+            planeDiffuseMap.Enable();
+            gl.ActiveTexture(TextureUnit.Texture1);
+            planeSpecularMap.Enable();
+            gl.ActiveTexture(TextureUnit.Texture2);
+            cubeDiffuseMap.Enable();
+            gl.ActiveTexture(TextureUnit.Texture3);
+            cubeSpecularMap.Enable();
+
             Vector3D<float> diffuseColor = lightColor * new Vector3D<float>(0.5f, 0.5f, 0.5f);
             Vector3D<float> ambientColor = diffuseColor * new Vector3D<float>(0.2f, 0.2f, 0.2f);
 
             uint positionAttrib = (uint)lightingProgram.GetAttrib("position");
             uint normalAttrib = (uint)lightingProgram.GetAttrib("normal");
+            uint texCoordsAttrib = (uint)lightingProgram.GetAttrib("texCoords");
 
             gl.EnableVertexAttribArray(positionAttrib);
             gl.EnableVertexAttribArray(normalAttrib);
+            gl.EnableVertexAttribArray(texCoordsAttrib);
 
             lightingProgram.Enable();
 
@@ -226,62 +254,63 @@ internal class Program
             // plane
             {
                 lightingProgram.SetUniform("model", plane.Transform);
-                lightingProgram.SetUniform("material.ambient", MaterialsHelper.WhitePlastic.Ambient);
-                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.WhitePlastic.Diffuse);
-                lightingProgram.SetUniform("material.specular", MaterialsHelper.WhitePlastic.Specular);
-                lightingProgram.SetUniform("material.shininess", MaterialsHelper.WhitePlastic.Shininess);
+                lightingProgram.SetUniform("material.diffuse", 0);
+                lightingProgram.SetUniform("material.specular", 1);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                plane.Draw(positionAttrib, normalAttrib);
+                plane.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             // cube1
             {
                 lightingProgram.SetUniform("model", cube1.Transform);
-                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Emerald.Ambient);
-                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Emerald.Diffuse);
-                lightingProgram.SetUniform("material.specular", MaterialsHelper.Emerald.Specular);
-                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Emerald.Shininess);
+                lightingProgram.SetUniform("material.diffuse", 2);
+                lightingProgram.SetUniform("material.specular", 3);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                cube1.Draw(positionAttrib, normalAttrib);
+                cube1.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             // cube2
             {
                 lightingProgram.SetUniform("model", cube2.Transform);
-                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Jade.Ambient);
-                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Jade.Diffuse);
-                lightingProgram.SetUniform("material.specular", MaterialsHelper.Jade.Specular);
-                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Jade.Shininess);
+                lightingProgram.SetUniform("material.diffuse", 2);
+                lightingProgram.SetUniform("material.specular", 3);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                cube2.Draw(positionAttrib, normalAttrib);
+                cube2.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             // cube3
             {
                 lightingProgram.SetUniform("model", cube3.Transform);
-                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Obsidian.Ambient);
-                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Obsidian.Diffuse);
-                lightingProgram.SetUniform("material.specular", MaterialsHelper.Obsidian.Specular);
-                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Obsidian.Shininess);
+                lightingProgram.SetUniform("material.diffuse", 2);
+                lightingProgram.SetUniform("material.specular", 3);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                cube3.Draw(positionAttrib, normalAttrib);
+                cube3.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             // cube4
             {
                 lightingProgram.SetUniform("model", cube4.Transform);
-                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Pearl.Ambient);
-                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Pearl.Diffuse);
-                lightingProgram.SetUniform("material.specular", MaterialsHelper.Pearl.Specular);
-                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Pearl.Shininess);
+                lightingProgram.SetUniform("material.diffuse", 2);
+                lightingProgram.SetUniform("material.specular", 3);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                cube4.Draw(positionAttrib, normalAttrib);
+                cube4.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             lightingProgram.Disable();
 
             gl.DisableVertexAttribArray(normalAttrib);
             gl.DisableVertexAttribArray(positionAttrib);
+            gl.DisableVertexAttribArray(texCoordsAttrib);
+
+            planeDiffuseMap.Disable();
+            planeSpecularMap.Disable();
+            cubeDiffuseMap.Disable();
+            cubeSpecularMap.Disable();
         }
 
         // ImGui

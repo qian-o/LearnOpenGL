@@ -15,6 +15,10 @@ public unsafe abstract class BaseModel
 
     public uint NormalBuffer { get; protected set; }
 
+    public Vector2D<float>[] TextureData { get; protected set; } = Array.Empty<Vector2D<float>>();
+
+    public uint TextureBuffer { get; protected set; }
+
     public GLEnum Mode { get; protected set; } = GLEnum.Triangles;
 
     public Matrix4X4<float> Transform { get; set; } = Matrix4X4<float>.Identity;
@@ -41,12 +45,23 @@ public unsafe abstract class BaseModel
         }
     }
 
+    public float* TextureDataPointer
+    {
+        get
+        {
+            fixed (Vector2D<float>* textureDataPointer = TextureData)
+            {
+                return (float*)textureDataPointer;
+            }
+        }
+    }
+
     protected BaseModel(GL gl)
     {
         _gl = gl;
     }
 
-    public void Draw(uint positionAttrib, uint? normalAttrib = null)
+    public void Draw(uint positionAttrib, uint? normalAttrib = null, uint? texCoordsAttrib = null)
     {
         _gl.BindBuffer(GLEnum.ArrayBuffer, VertexBuffer);
         _gl.VertexAttribPointer(positionAttrib, 3, GLEnum.Float, false, 0, null);
@@ -56,6 +71,13 @@ public unsafe abstract class BaseModel
         {
             _gl.BindBuffer(GLEnum.ArrayBuffer, NormalBuffer);
             _gl.VertexAttribPointer(normalAttrib.Value, 3, GLEnum.Float, false, 0, null);
+            _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
+        }
+
+        if (texCoordsAttrib != null)
+        {
+            _gl.BindBuffer(GLEnum.ArrayBuffer, TextureBuffer);
+            _gl.VertexAttribPointer(texCoordsAttrib.Value, 2, GLEnum.Float, false, 0, null);
             _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
         }
 

@@ -119,6 +119,62 @@ public unsafe class Cube : BaseModel
         _gl.BufferData(GLEnum.ArrayBuffer, (uint)(NormalData.Length * 3 * sizeof(float)), NormalDataPointer, GLEnum.StaticDraw);
         _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
 
+        TextureData = new[]
+        {
+            // Front face
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+
+            // Back face
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+
+            // Left face
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+
+            // Right face
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+
+            // Bottom face
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(0.0f, 1.0f),
+
+            // Top face
+            new Vector2D<float>(0.0f, 1.0f),
+            new Vector2D<float>(1.0f, 1.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(1.0f, 0.0f),
+            new Vector2D<float>(0.0f, 0.0f),
+            new Vector2D<float>(0.0f, 1.0f)
+        };
+    
+        TextureBuffer = _gl.GenBuffer();
+        _gl.BindBuffer(GLEnum.ArrayBuffer, TextureBuffer);
+        _gl.BufferData(GLEnum.ArrayBuffer, (uint)(TextureData.Length * 2 * sizeof(float)), TextureDataPointer, GLEnum.StaticDraw);
+        _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
+
         Mode = GLEnum.Triangles;
     }
 }
