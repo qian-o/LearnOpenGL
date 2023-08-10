@@ -32,6 +32,9 @@ internal class Program
     private static Cube lightCube = null!;
     private static Plane plane = null!;
     private static Cube cube1 = null!;
+    private static Cube cube2 = null!;
+    private static Cube cube3 = null!;
+    private static Cube cube4 = null!;
     #endregion
 
     #region Colors
@@ -40,7 +43,10 @@ internal class Program
 
     #region Positions
     private static Vector3D<float> lightPos = new(1.2f, 6.0f, -6.0f);
-    private static Vector3D<float> cube1Pos = new(0.0f, 0.5f, -1.5f);
+    private static Vector3D<float> cube1Pos = new(-3.8f, 0.5f, 0.0f);
+    private static Vector3D<float> cube2Pos = new(-2.6f, 0.5f, 0.0f);
+    private static Vector3D<float> cube3Pos = new(-1.4f, 0.5f, 0.0f);
+    private static Vector3D<float> cube4Pos = new(-0.2f, 0.5f, 0.0f);
     #endregion
 
     #region Programs
@@ -78,6 +84,9 @@ internal class Program
         lightCube = new Cube(gl);
         plane = new Plane(gl);
         cube1 = new Cube(gl);
+        cube2 = new Cube(gl);
+        cube3 = new Cube(gl);
+        cube4 = new Cube(gl);
 
         using Shader mvp = new(gl, GLEnum.VertexShader, File.ReadAllText("Shaders/mvp.vert"));
         using Shader light = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/light.frag"));
@@ -155,8 +164,11 @@ internal class Program
         camera.Height = window.Size.Y;
 
         lightCube.Transform = Matrix4X4.CreateScale(0.2f) * Matrix4X4.CreateTranslation(lightPos);
-        plane.Transform = Matrix4X4.CreateScale(10.0f);
+        plane.Transform = Matrix4X4.CreateScale(100.0f);
         cube1.Transform = Matrix4X4.CreateTranslation(cube1Pos);
+        cube2.Transform = Matrix4X4.CreateTranslation(cube2Pos);
+        cube3.Transform = Matrix4X4.CreateTranslation(cube3Pos);
+        cube4.Transform = Matrix4X4.CreateTranslation(cube4Pos);
     }
 
     private static void Window_Render(double obj)
@@ -229,6 +241,39 @@ internal class Program
                 lightingProgram.SetUniform("material.shininess", MaterialsHelper.Emerald.Shininess);
 
                 cube1.Draw(positionAttrib, normalAttrib);
+            }
+
+            // cube2
+            {
+                lightingProgram.SetUniform("model", cube2.Transform);
+                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Jade.Ambient);
+                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Jade.Diffuse);
+                lightingProgram.SetUniform("material.specular", MaterialsHelper.Jade.Specular);
+                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Jade.Shininess);
+
+                cube2.Draw(positionAttrib, normalAttrib);
+            }
+
+            // cube3
+            {
+                lightingProgram.SetUniform("model", cube3.Transform);
+                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Obsidian.Ambient);
+                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Obsidian.Diffuse);
+                lightingProgram.SetUniform("material.specular", MaterialsHelper.Obsidian.Specular);
+                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Obsidian.Shininess);
+
+                cube3.Draw(positionAttrib, normalAttrib);
+            }
+
+            // cube4
+            {
+                lightingProgram.SetUniform("model", cube4.Transform);
+                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Pearl.Ambient);
+                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Pearl.Diffuse);
+                lightingProgram.SetUniform("material.specular", MaterialsHelper.Pearl.Specular);
+                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Pearl.Shininess);
+
+                cube4.Draw(positionAttrib, normalAttrib);
             }
 
             lightingProgram.Disable();
