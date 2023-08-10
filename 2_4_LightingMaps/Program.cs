@@ -44,10 +44,10 @@ internal class Program
 
     #region Positions
     private static Vector3D<float> lightPos = new(1.2f, 6.0f, -6.0f);
-    private static Vector3D<float> cube1Pos = new(-3.8f, 0.5f, 0.0f);
-    private static Vector3D<float> cube2Pos = new(-2.6f, 0.5f, 0.0f);
-    private static Vector3D<float> cube3Pos = new(-1.4f, 0.5f, 0.0f);
-    private static Vector3D<float> cube4Pos = new(-0.2f, 0.5f, 0.0f);
+    private static Vector3D<float> cube1Pos = new(-3.8f, 0.5001f, 0.0f);
+    private static Vector3D<float> cube2Pos = new(-2.6f, 0.5001f, 0.0f);
+    private static Vector3D<float> cube3Pos = new(-1.4f, 0.5001f, 0.0f);
+    private static Vector3D<float> cube4Pos = new(-0.2f, 0.5001f, 0.0f);
     #endregion
 
     #region Programs
@@ -245,8 +245,8 @@ internal class Program
             lightingProgram.SetUniform("view", camera.View);
             lightingProgram.SetUniform("projection", camera.Projection);
 
-            lightingProgram.SetUniform("lightPos", lightPos);
             lightingProgram.SetUniform("viewPos", camera.Position);
+            lightingProgram.SetUniform("light.position", lightPos);
             lightingProgram.SetUniform("light.ambient", ambientColor);
             lightingProgram.SetUniform("light.diffuse", diffuseColor);
             lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f, 1.0f, 1.0f));

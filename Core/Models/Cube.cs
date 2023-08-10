@@ -169,7 +169,7 @@ public unsafe class Cube : BaseModel
             new Vector2D<float>(0.0f, 0.0f),
             new Vector2D<float>(0.0f, 1.0f)
         };
-    
+
         TextureBuffer = _gl.GenBuffer();
         _gl.BindBuffer(GLEnum.ArrayBuffer, TextureBuffer);
         _gl.BufferData(GLEnum.ArrayBuffer, (uint)(TextureData.Length * 2 * sizeof(float)), TextureDataPointer, GLEnum.StaticDraw);
