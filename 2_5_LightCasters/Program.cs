@@ -50,6 +50,11 @@ internal class Program
     private static Vector3D<float> cube4Pos = new(-0.2f, 0.5001f, 0.0f);
     #endregion
 
+    #region Speeds
+    private static float cameraSpeed = 1.5f;
+    private static float cameraSensitivity = 0.2f;
+    #endregion
+
     #region Programs
     // 光源
     private static ShaderProgram lightProgram = null!;
@@ -85,7 +90,8 @@ internal class Program
         controller = new ImGuiController(gl = window.CreateOpenGLES(), window, inputContext = window.CreateInput());
         camera = new Camera
         {
-            Position = new Vector3D<float>(0.0f, 2.0f, 3.0f)
+            Position = new Vector3D<float>(0.0f, 2.0f, 3.0f),
+            Fov = 45.0f
         };
 
         mouse = inputContext.Mice[0];
@@ -141,8 +147,8 @@ internal class Program
                 float deltaX = vector.X - lastPos.X;
                 float deltaY = vector.Y - lastPos.Y;
 
-                camera.Yaw += deltaX * 0.2f;
-                camera.Pitch += -deltaY * 0.2f;
+                camera.Yaw += deltaX * cameraSensitivity;
+                camera.Pitch += -deltaY * cameraSensitivity;
 
                 lastPos = vector;
             }
@@ -154,32 +160,32 @@ internal class Program
 
         if (keyboard.IsKeyPressed(Key.W))
         {
-            camera.Position += camera.Front * 1.5f * (float)obj;
+            camera.Position += camera.Front * cameraSpeed * (float)obj;
         }
 
         if (keyboard.IsKeyPressed(Key.A))
         {
-            camera.Position -= camera.Right * 1.5f * (float)obj;
+            camera.Position -= camera.Right * cameraSpeed * (float)obj;
         }
 
         if (keyboard.IsKeyPressed(Key.S))
         {
-            camera.Position -= camera.Front * 1.5f * (float)obj;
+            camera.Position -= camera.Front * cameraSpeed * (float)obj;
         }
 
         if (keyboard.IsKeyPressed(Key.D))
         {
-            camera.Position += camera.Right * 1.5f * (float)obj;
+            camera.Position += camera.Right * cameraSpeed * (float)obj;
         }
 
         if (keyboard.IsKeyPressed(Key.Q))
         {
-            camera.Position -= camera.Up * 1.5f * (float)obj;
+            camera.Position -= camera.Up * cameraSpeed * (float)obj;
         }
 
         if (keyboard.IsKeyPressed(Key.E))
         {
-            camera.Position += camera.Up * 1.5f * (float)obj;
+            camera.Position += camera.Up * cameraSpeed * (float)obj;
         }
 
         camera.Width = window.Size.X;
@@ -324,6 +330,11 @@ internal class Program
             lightColor.X = vector.X;
             lightColor.Y = vector.Y;
             lightColor.Z = vector.Z;
+
+            ImGui.Begin("Camera Settings");
+
+            ImGui.DragFloat("Camera Speed", ref cameraSpeed, 0.5f, 0.5f, 20.0f);
+            ImGui.DragFloat("Camera Sensitivity", ref cameraSensitivity, 0.2f, 0.2f, 10.0f);
 
             controller.Render();
         }
