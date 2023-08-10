@@ -30,12 +30,9 @@ internal class Program
     #endregion
 
     #region Models
-    private static Cube lightCube = null!;
+    private static Cube light = null!;
     private static Plane plane = null!;
-    private static Cube cube1 = null!;
-    private static Cube cube2 = null!;
-    private static Cube cube3 = null!;
-    private static Cube cube4 = null!;
+    private static Cube[] cubes = null!;
     #endregion
 
     #region Colors
@@ -43,23 +40,19 @@ internal class Program
     #endregion
 
     #region Positions
-    private static Vector3D<float> lightPos = new(1.2f, 6.0f, -6.0f);
-    private static Vector3D<float> cube1Pos = new(-3.8f, 0.5001f, 0.0f);
-    private static Vector3D<float> cube2Pos = new(-2.6f, 0.5001f, 0.0f);
-    private static Vector3D<float> cube3Pos = new(-1.4f, 0.5001f, 0.0f);
-    private static Vector3D<float> cube4Pos = new(-0.2f, 0.5001f, 0.0f);
+    private static Vector3D<float> lightPos = new(1.2f, 4.0f, 2.0f);
+    private static Vector3D<float>[] cubePositions = null!;
     #endregion
 
     #region Speeds
-    private static float cameraSpeed = 1.5f;
+    private static float cameraSpeed = 4.0f;
     private static float cameraSensitivity = 0.2f;
     #endregion
 
     #region Programs
-    // 光源
-    private static ShaderProgram lightProgram = null!;
-
-    // 场景内物体光照
+    // 纯色
+    private static ShaderProgram solidColorProgram = null!;
+    // 场景内光照
     private static ShaderProgram lightingProgram = null!;
     #endregion
 
@@ -97,28 +90,43 @@ internal class Program
         mouse = inputContext.Mice[0];
         keyboard = inputContext.Keyboards[0];
 
-        lightCube = new Cube(gl);
+        light = new Cube(gl);
         plane = new Plane(gl);
-        cube1 = new Cube(gl);
-        cube2 = new Cube(gl);
-        cube3 = new Cube(gl);
-        cube4 = new Cube(gl);
+        cubes = new Cube[10];
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            cubes[i] = new Cube(gl);
+        }
+
+        cubePositions = new Vector3D<float>[]
+        {
+            new Vector3D<float>(0.0f, 0.0f, 0.0f),
+            new Vector3D<float>(2.0f, 5.0f, -15.0f),
+            new Vector3D<float>(-1.5f, -2.2f, -2.5f),
+            new Vector3D<float>(-3.8f, -2.0f, -12.3f),
+            new Vector3D<float>(2.4f, -0.4f, -3.5f),
+            new Vector3D<float>(-1.7f, 3.0f, -7.5f),
+            new Vector3D<float>(1.3f, -2.0f, -2.5f),
+            new Vector3D<float>(1.5f, 2.0f, -2.5f),
+            new Vector3D<float>(1.5f, 0.2f, -1.5f),
+            new Vector3D<float>(-1.3f, 1.0f, -1.5f)
+        };
 
         using Shader mvp = new(gl, GLEnum.VertexShader, File.ReadAllText("Shaders/mvp.vert"));
-        using Shader light = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/light.frag"));
+        using Shader solidColor = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/solidColor.frag"));
         using Shader lighting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/lighting.frag"));
 
-        lightProgram = new ShaderProgram(gl);
-        lightProgram.Attach(mvp, light);
+        solidColorProgram = new ShaderProgram(gl);
+        solidColorProgram.Attach(mvp, solidColor);
 
         lightingProgram = new ShaderProgram(gl);
         lightingProgram.Attach(mvp, lighting);
 
         planeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
-        planeDiffuseMap.WriteColor(MaterialsHelper.WhitePlastic.Diffuse);
+        planeDiffuseMap.WriteImage("wood_floor.jpg");
 
         planeSpecularMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
-        planeSpecularMap.WriteColor(MaterialsHelper.WhitePlastic.Specular);
+        planeSpecularMap.WriteColor(MaterialsHelper.Brass.Specular);
 
         cubeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
         cubeDiffuseMap.WriteImage("container2.png");
@@ -191,35 +199,41 @@ internal class Program
         camera.Width = window.Size.X;
         camera.Height = window.Size.Y;
 
-        lightCube.Transform = Matrix4X4.CreateScale(0.2f) * Matrix4X4.CreateTranslation(lightPos);
-        plane.Transform = Matrix4X4.CreateScale(100.0f);
-        cube1.Transform = Matrix4X4.CreateTranslation(cube1Pos);
-        cube2.Transform = Matrix4X4.CreateTranslation(cube2Pos);
-        cube3.Transform = Matrix4X4.CreateTranslation(cube3Pos);
-        cube4.Transform = Matrix4X4.CreateTranslation(cube4Pos);
+        light.Transform = Matrix4X4.CreateScale(0.5f) * Matrix4X4.CreateTranslation(lightPos);
+        plane.Transform = Matrix4X4.CreateScale(new Vector3D<float>(1.0f, 1.0f, 2.3f)) * Matrix4X4.CreateScale(100.0f);
+        plane.TextureScale = new Vector2D<float>(100.0f);
+        for (int i = 0; i < 10; i++)
+        {
+            Matrix4X4<float> matrix = Matrix4X4<float>.Identity;
+            matrix *= Matrix4X4.CreateTranslation(cubePositions[i]);
+            matrix *= Matrix4X4.CreateTranslation(new Vector3D<float>(0.0f, 1.0f, 0.0f));
+            matrix *= Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(20.0f * i), new Vector3D<float>(1.0f, 1.3f, 0.5f));
+
+            cubes[i].Transform = matrix;
+        }
     }
 
     private static void Window_Render(double obj)
     {
         gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-        // 光源
+        // 点光源
         {
-            uint positionAttrib = (uint)lightProgram.GetAttrib("position");
+            uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
 
             gl.EnableVertexAttribArray(positionAttrib);
 
-            lightProgram.Enable();
+            solidColorProgram.Enable();
 
-            lightProgram.SetUniform("model", lightCube.Transform);
-            lightProgram.SetUniform("view", camera.View);
-            lightProgram.SetUniform("projection", camera.Projection);
+            solidColorProgram.SetUniform("model", light.Transform);
+            solidColorProgram.SetUniform("view", camera.View);
+            solidColorProgram.SetUniform("projection", camera.Projection);
 
-            lightProgram.SetUniform("color", lightColor);
+            solidColorProgram.SetUniform("color", lightColor);
 
-            lightCube.Draw(positionAttrib);
+            light.Draw(positionAttrib);
 
-            lightProgram.Disable();
+            solidColorProgram.Disable();
 
             gl.DisableVertexAttribArray(positionAttrib);
         }
@@ -256,6 +270,9 @@ internal class Program
             lightingProgram.SetUniform("light.ambient", ambientColor);
             lightingProgram.SetUniform("light.diffuse", diffuseColor);
             lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f, 1.0f, 1.0f));
+            lightingProgram.SetUniform("light.constant", 1.0f);
+            lightingProgram.SetUniform("light.linear", 0.007f);
+            lightingProgram.SetUniform("light.quadratic", 0.0002f);
 
             // plane
             {
@@ -267,44 +284,14 @@ internal class Program
                 plane.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
-            // cube1
+            foreach (Cube cube in cubes)
             {
-                lightingProgram.SetUniform("model", cube1.Transform);
+                lightingProgram.SetUniform("model", cube.Transform);
                 lightingProgram.SetUniform("material.diffuse", 2);
                 lightingProgram.SetUniform("material.specular", 3);
                 lightingProgram.SetUniform("material.shininess", 64.0f);
 
-                cube1.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
-            }
-
-            // cube2
-            {
-                lightingProgram.SetUniform("model", cube2.Transform);
-                lightingProgram.SetUniform("material.diffuse", 2);
-                lightingProgram.SetUniform("material.specular", 3);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
-
-                cube2.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
-            }
-
-            // cube3
-            {
-                lightingProgram.SetUniform("model", cube3.Transform);
-                lightingProgram.SetUniform("material.diffuse", 2);
-                lightingProgram.SetUniform("material.specular", 3);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
-
-                cube3.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
-            }
-
-            // cube4
-            {
-                lightingProgram.SetUniform("model", cube4.Transform);
-                lightingProgram.SetUniform("material.diffuse", 2);
-                lightingProgram.SetUniform("material.specular", 3);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
-
-                cube4.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
+                cube.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             lightingProgram.Disable();
@@ -323,13 +310,19 @@ internal class Program
         {
             controller!.Update((float)obj);
 
-            ImGui.Begin("Color Settings");
+            ImGui.Begin("Light Settings");
 
-            Vector3 vector = (Vector3)lightColor;
-            ImGui.ColorEdit3("Light Color", ref vector);
-            lightColor.X = vector.X;
-            lightColor.Y = vector.Y;
-            lightColor.Z = vector.Z;
+            Vector3 color = (Vector3)lightColor;
+            ImGui.ColorEdit3("Light Color", ref color);
+            lightColor.X = color.X;
+            lightColor.Y = color.Y;
+            lightColor.Z = color.Z;
+
+            Vector3 position = (Vector3)lightPos;
+            ImGui.DragFloat3("Light Position", ref position, 0.1f);
+            lightPos.X = position.X;
+            lightPos.Y = position.Y;
+            lightPos.Z = position.Z;
 
             ImGui.Begin("Camera Settings");
 
@@ -348,7 +341,6 @@ internal class Program
     private static void Window_Closing()
     {
         lightingProgram.Dispose();
-        lightProgram.Dispose();
 
         controller.Dispose();
         inputContext.Dispose();

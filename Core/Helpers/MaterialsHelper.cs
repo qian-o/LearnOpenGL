@@ -28,6 +28,10 @@ public class MaterialsHelper
                                                      new Vector3D<float>(0.396f, 0.74151f, 0.69102f),
                                                      new Vector3D<float>(0.297254f, 0.30829f, 0.306678f),
                                                      0.1f);
+    public static Materials Brass { get; } = new(new Vector3D<float>(0.329412f, 0.223529f, 0.027451f),
+                                                 new Vector3D<float>(0.780392f, 0.568627f, 0.113725f),
+                                                 new Vector3D<float>(0.992157f, 0.941176f, 0.807843f),
+                                                 0.21794872f);
     public static Materials WhitePlastic { get; } = new(new Vector3D<float>(0.0f, 0.0f, 0.0f),
                                                         new Vector3D<float>(0.55f, 0.55f, 0.55f),
                                                         new Vector3D<float>(0.70f, 0.70f, 0.70f),

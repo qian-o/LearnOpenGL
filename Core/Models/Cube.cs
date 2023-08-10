@@ -172,7 +172,7 @@ public unsafe class Cube : BaseModel
 
         TextureBuffer = _gl.GenBuffer();
         _gl.BindBuffer(GLEnum.ArrayBuffer, TextureBuffer);
-        _gl.BufferData(GLEnum.ArrayBuffer, (uint)(TextureData.Length * 2 * sizeof(float)), TextureDataPointer, GLEnum.StaticDraw);
+        _gl.BufferData(GLEnum.ArrayBuffer, (uint)(TextureData.Length * 2 * sizeof(float)), TextureDataPointer, GLEnum.DynamicDraw);
         _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
 
         Mode = GLEnum.Triangles;

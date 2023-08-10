@@ -7,6 +7,8 @@ public unsafe abstract class BaseModel
 {
     protected readonly GL _gl;
 
+    private Vector2D<float> textureScale;
+
     public Vector3D<float>[] VertexData { get; protected set; } = Array.Empty<Vector3D<float>>();
 
     public uint VertexBuffer { get; protected set; }
@@ -18,6 +20,20 @@ public unsafe abstract class BaseModel
     public Vector2D<float>[] TextureData { get; protected set; } = Array.Empty<Vector2D<float>>();
 
     public uint TextureBuffer { get; protected set; }
+
+    public Vector2D<float> TextureScale
+    {
+        get => textureScale;
+        set
+        {
+            if (textureScale != value)
+            {
+                textureScale = value;
+
+                ScaleTextureData();
+            }
+        }
+    }
 
     public GLEnum Mode { get; protected set; } = GLEnum.Triangles;
 
@@ -82,5 +98,18 @@ public unsafe abstract class BaseModel
         }
 
         _gl.DrawArrays(Mode, 0, (uint)VertexData.Length);
+    }
+
+    private void ScaleTextureData()
+    {
+        for (int i = 0; i < TextureData.Length; i++)
+        {
+            TextureData[i].X *= TextureScale.X;
+            TextureData[i].Y *= TextureScale.Y;
+        }
+
+        _gl.BindBuffer(GLEnum.ArrayBuffer, TextureBuffer);
+        _gl.BufferData(GLEnum.ArrayBuffer, (uint)(TextureData.Length * 2 * sizeof(float)), TextureDataPointer, GLEnum.StaticDraw);
+        _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
     }
 }
