@@ -4,11 +4,19 @@ namespace Core.Helpers;
 
 public struct Materials
 {
-    public Vector3D<float> Ambient { get; set; }
+    public Vector3D<float> Ambient;
 
-    public Vector3D<float> Diffuse { get; set; }
+    public Vector3D<float> Diffuse;
 
-    public Vector3D<float> Specular { get; set; }
+    public Vector3D<float> Specular;
 
-    public float Shininess { get; set; }
+    public float Shininess;
+
+    public Materials(Vector3D<float> ambient, Vector3D<float> diffuse, Vector3D<float> specular, float shininess)
+    {
+        Ambient = ambient;
+        Diffuse = diffuse;
+        Specular = specular;
+        Shininess = shininess;
+    }
 }

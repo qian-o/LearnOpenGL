@@ -8,6 +8,7 @@ using Silk.NET.OpenGLES.Extensions.ImGui;
 using Silk.NET.Windowing;
 using System.Drawing;
 using System.Numerics;
+using Plane = Core.Models.Plane;
 using Shader = Core.Helpers.Shader;
 
 namespace Examples;
@@ -29,6 +30,7 @@ internal class Program
 
     #region Models
     private static Cube lightCube = null!;
+    private static Plane plane = null!;
     private static Cube cube1 = null!;
     #endregion
 
@@ -37,8 +39,8 @@ internal class Program
     #endregion
 
     #region Positions
-    private static Vector3D<float> lightPos = new(1.2f, 1.5f, -2.0f);
-    private static Vector3D<float> cube1Pos = new(0.0f, 0.0f, -1.5f);
+    private static Vector3D<float> lightPos = new(1.2f, 6.0f, -6.0f);
+    private static Vector3D<float> cube1Pos = new(0.0f, 0.5f, -1.5f);
     #endregion
 
     #region Programs
@@ -68,11 +70,13 @@ internal class Program
     {
         controller = new ImGuiController(gl = window.CreateOpenGLES(), window, inputContext = window.CreateInput());
         camera = new Camera();
+        camera.Position = new Vector3D<float>(0.0f, 2.0f, 3.0f);
 
         mouse = inputContext.Mice[0];
         keyboard = inputContext.Keyboards[0];
 
         lightCube = new Cube(gl);
+        plane = new Plane(gl);
         cube1 = new Cube(gl);
 
         using Shader mvp = new(gl, GLEnum.VertexShader, File.ReadAllText("Shaders/mvp.vert"));
@@ -151,6 +155,7 @@ internal class Program
         camera.Height = window.Size.Y;
 
         lightCube.Transform = Matrix4X4.CreateScale(0.2f) * Matrix4X4.CreateTranslation(lightPos);
+        plane.Transform = Matrix4X4.CreateScale(10.0f);
         cube1.Transform = Matrix4X4.CreateTranslation(cube1Pos);
     }
 
@@ -182,7 +187,7 @@ internal class Program
             gl.DisableVertexAttribArray(positionAttrib);
         }
 
-        // 进行光照
+        // 场景内物体
         {
             Vector3D<float> diffuseColor = lightColor * new Vector3D<float>(0.5f, 0.5f, 0.5f);
             Vector3D<float> ambientColor = diffuseColor * new Vector3D<float>(0.2f, 0.2f, 0.2f);
@@ -195,21 +200,36 @@ internal class Program
 
             lightingProgram.Enable();
 
-            lightingProgram.SetUniform("model", cube1.Transform);
             lightingProgram.SetUniform("view", camera.View);
             lightingProgram.SetUniform("projection", camera.Projection);
 
             lightingProgram.SetUniform("lightPos", lightPos);
             lightingProgram.SetUniform("viewPos", camera.Position);
-            lightingProgram.SetUniform("material.ambient", new Vector3D<float>(1.0f, 0.5f, 0.31f));
-            lightingProgram.SetUniform("material.diffuse", new Vector3D<float>(1.0f, 0.5f, 0.31f));
-            lightingProgram.SetUniform("material.specular", new Vector3D<float>(0.5f, 0.5f, 0.5f));
-            lightingProgram.SetUniform("material.shininess", 32.0f);
             lightingProgram.SetUniform("light.ambient", ambientColor);
             lightingProgram.SetUniform("light.diffuse", diffuseColor);
             lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f, 1.0f, 1.0f));
 
-            cube1.Draw(positionAttrib, normalAttrib);
+            // plane
+            {
+                lightingProgram.SetUniform("model", plane.Transform);
+                lightingProgram.SetUniform("material.ambient", MaterialsHelper.WhitePlastic.Ambient);
+                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.WhitePlastic.Diffuse);
+                lightingProgram.SetUniform("material.specular", MaterialsHelper.WhitePlastic.Specular);
+                lightingProgram.SetUniform("material.shininess", MaterialsHelper.WhitePlastic.Shininess);
+
+                plane.Draw(positionAttrib, normalAttrib);
+            }
+
+            // cube1
+            {
+                lightingProgram.SetUniform("model", cube1.Transform);
+                lightingProgram.SetUniform("material.ambient", MaterialsHelper.Emerald.Ambient);
+                lightingProgram.SetUniform("material.diffuse", MaterialsHelper.Emerald.Diffuse);
+                lightingProgram.SetUniform("material.specular", MaterialsHelper.Emerald.Specular);
+                lightingProgram.SetUniform("material.shininess", MaterialsHelper.Emerald.Shininess);
+
+                cube1.Draw(positionAttrib, normalAttrib);
+            }
 
             lightingProgram.Disable();
 
