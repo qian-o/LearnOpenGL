@@ -36,7 +36,7 @@ internal class Program
     #endregion
 
     #region Colors
-    private static Vector3D<float> lightColor = new(1.0f, 1.0f, 1.0f);
+    private static Vector3D<float> lightColor = new(1.0f);
     #endregion
 
     #region Positions
@@ -126,7 +126,7 @@ internal class Program
         planeDiffuseMap.WriteImage("wood_floor.jpg");
 
         planeSpecularMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
-        planeSpecularMap.WriteColor(MaterialsHelper.Brass.Specular);
+        planeSpecularMap.WriteColor(new Vector3D<float>(0.7843137f));
 
         cubeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
         cubeDiffuseMap.WriteImage("container2.png");
