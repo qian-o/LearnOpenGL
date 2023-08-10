@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_2_BasicLighting", "2_2_Ba
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_3_Materials", "2_3_Materials\2_3_Materials.csproj", "{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_4_LightingMaps", "2_4_LightingMaps\2_4_LightingMaps.csproj", "{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{FD1B4B01-9B8A-47D2-BBE8-FC2DBF3237CA} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{88A7E231-88B1-4E10-BAEB-CA155654FC07} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
+		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E82C825C-063E-4E06-A5FC-99496817EB42}
