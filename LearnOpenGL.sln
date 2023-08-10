@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_3_Materials", "2_3_Materi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_4_LightingMaps", "2_4_LightingMaps\2_4_LightingMaps.csproj", "{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_5_LightCasters", "2_5_LightCasters\2_5_LightCasters.csproj", "{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 		{88A7E231-88B1-4E10-BAEB-CA155654FC07} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
+		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E82C825C-063E-4E06-A5FC-99496817EB42}
