@@ -40,7 +40,7 @@ internal class Program
     #endregion
 
     #region Colors
-    private static Vector3D<float> dirLightColor = new(1.0f);
+    private static Vector3D<float> dirLightColor = new(0.62218857f, 0.6410692f, 0.67156863f);
     private static Vector3D<float>[] pointLightColors = null!;
     #endregion
 
