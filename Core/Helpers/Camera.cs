@@ -56,7 +56,7 @@ public class Camera
 
     public Matrix4X4<float> View => Matrix4X4.CreateLookAt(Position, Position + Front, Up);
 
-    public Matrix4X4<float> Projection => Matrix4X4.CreatePerspectiveFieldOfView(fov, (float)Width / Height, 1.0f, 100.0f);
+    public Matrix4X4<float> Projection => Matrix4X4.CreatePerspectiveFieldOfView(fov, (float)Width / Height, 0.1f, 1000.0f);
 
     private void UpdateVectors()
     {
