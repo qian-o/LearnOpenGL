@@ -8,8 +8,16 @@ public class Shader : IDisposable
 
     public uint Id { get; }
 
-    public Shader(GL gl, GLEnum type, string shaderSource)
+    public Shader(GL gl, GLEnum type, string shaderSource, (string, string)[]? replaceDefines = null)
     {
+        if (replaceDefines != null)
+        {
+            foreach ((string, string) define in replaceDefines)
+            {
+                shaderSource = shaderSource.Replace(define.Item1, define.Item2);
+            }
+        }
+
         _gl = gl;
 
         Id = _gl.CreateShader(type);

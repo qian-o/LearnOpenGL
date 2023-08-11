@@ -1,5 +1,6 @@
 ﻿using Silk.NET.Maths;
 using Silk.NET.OpenGLES;
+using Silk.NET.OpenGLES.Extensions.EXT;
 
 namespace Core.Helpers;
 
@@ -24,9 +25,12 @@ public unsafe class Texture : IDisposable
         PboId = _gl.GenBuffer();
         TextureId = _gl.GenTexture();
 
+        _gl.GetFloat((GLEnum)EXT.MaxTextureMaxAnisotropyExt, out float maxAnisotropy);
+
         _gl.BindTexture(GLEnum.Texture2D, TextureId);
 
-        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.Linear);
+        _gl.TexParameter(GLEnum.Texture2D, (GLEnum)EXT.MaxTextureMaxAnisotropyExt, maxAnisotropy);
+        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)GLEnum.Linear);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)GLEnum.Repeat);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)GLEnum.Repeat);
@@ -58,6 +62,7 @@ public unsafe class Texture : IDisposable
 
         _gl.UnmapBuffer(GLEnum.PixelUnpackBuffer);
         _gl.TexImage2D(GLEnum.Texture2D, 0, (int)GLEnum.Rgba8, Size.X, Size.Y, 0, _format, _type, null);
+        _gl.GenerateMipmap(GLEnum.Texture2D);
 
         _gl.BindTexture(GLEnum.Texture2D, 0);
         _gl.BindBuffer(GLEnum.PixelUnpackBuffer, 0);

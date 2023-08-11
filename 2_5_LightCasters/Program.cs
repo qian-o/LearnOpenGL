@@ -272,7 +272,7 @@ internal class Program
             lightingProgram.SetUniform("light.outerCutOff", MathHelper.Cos(MathHelper.DegreesToRadians(17.5f)));
             lightingProgram.SetUniform("light.ambient", ambientColor);
             lightingProgram.SetUniform("light.diffuse", diffuseColor);
-            lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f, 1.0f, 1.0f));
+            lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f));
             lightingProgram.SetUniform("light.constant", 1.0f);
             lightingProgram.SetUniform("light.linear", 0.007f);
             lightingProgram.SetUniform("light.quadratic", 0.0002f);

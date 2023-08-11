@@ -11,11 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_2_BasicLighting", "2_2_BasicLighting\2_2_BasicLighting.csproj", "{88A7E231-88B1-4E10-BAEB-CA155654FC07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_3_Materials", "2_3_Materials\2_3_Materials.csproj", "{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_3_Materials", "2_3_Materials\2_3_Materials.csproj", "{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_4_LightingMaps", "2_4_LightingMaps\2_4_LightingMaps.csproj", "{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_4_LightingMaps", "2_4_LightingMaps\2_4_LightingMaps.csproj", "{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_5_LightCasters", "2_5_LightCasters\2_5_LightCasters.csproj", "{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_5_LightCasters", "2_5_LightCasters\2_5_LightCasters.csproj", "{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2_6_MultipleLights", "2_6_MultipleLights\2_6_MultipleLights.csproj", "{1FCA5875-F6A3-493A-9908-3B087882D4CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FCA5875-F6A3-493A-9908-3B087882D4CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FCA5875-F6A3-493A-9908-3B087882D4CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FCA5875-F6A3-493A-9908-3B087882D4CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FCA5875-F6A3-493A-9908-3B087882D4CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{BB89696A-5AD3-448E-A6FB-DBDDAFAA8F39} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{D4B6A23C-C4F1-405B-AE34-CC1D5462E0C4} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{D41FB6C5-8DCD-4E8C-AA2C-F9A07AB75CD8} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
+		{1FCA5875-F6A3-493A-9908-3B087882D4CC} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E82C825C-063E-4E06-A5FC-99496817EB42}
