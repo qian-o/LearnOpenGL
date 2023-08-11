@@ -176,7 +176,7 @@ internal class Program
         gl.Enable(GLEnum.DepthTest);
         gl.ClearColor(Color.Black);
 
-        Custom custom = new Custom(gl,Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nanosuit/nanosuit.obj"));
+        Custom custom = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nanosuit/nanosuit.obj"));
     }
 
     private static void Window_Update(double obj)
