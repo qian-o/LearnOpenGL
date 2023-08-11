@@ -108,6 +108,13 @@ public unsafe class ShaderProgram : IDisposable
         _gl.Uniform1(GetUniform(name), data);
     }
 
+    public void SetUniform(string name, double data)
+    {
+        Enable();
+
+        _gl.Uniform1(GetUniform(name), Convert.ToSingle(data));
+    }
+
     public void SetUniform(string name, Vector2D<float> data)
     {
         Enable();

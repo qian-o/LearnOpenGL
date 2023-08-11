@@ -266,7 +266,10 @@ internal class Program
             lightingProgram.SetUniform("projection", camera.Projection);
 
             lightingProgram.SetUniform("viewPos", camera.Position);
-            lightingProgram.SetUniform("light.position", lightPos);
+            lightingProgram.SetUniform("light.position", camera.Position);
+            lightingProgram.SetUniform("light.direction", camera.Front);
+            lightingProgram.SetUniform("light.cutOff", MathHelper.Cos(MathHelper.DegreesToRadians(12.5f)));
+            lightingProgram.SetUniform("light.outerCutOff", MathHelper.Cos(MathHelper.DegreesToRadians(17.5f)));
             lightingProgram.SetUniform("light.ambient", ambientColor);
             lightingProgram.SetUniform("light.diffuse", diffuseColor);
             lightingProgram.SetUniform("light.specular", new Vector3D<float>(1.0f, 1.0f, 1.0f));
