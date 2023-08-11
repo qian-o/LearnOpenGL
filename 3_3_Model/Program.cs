@@ -16,11 +16,14 @@ namespace Examples;
 
 internal class Program
 {
+    private static readonly List<double> fpsSample = new();
+
     private static IWindow window = null!;
     private static GL gl = null!;
     private static IInputContext inputContext = null!;
     private static ImGuiController controller = null!;
     private static Camera camera = null!;
+    private static int fps;
 
     #region Input
     private static IMouse mouse = null!;
@@ -415,6 +418,8 @@ internal class Program
         {
             controller!.Update((float)obj);
 
+            ImGui.GetBackgroundDrawList().AddText(new Vector2(0, 0), ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.0f, 1.0f)), fps.ToString());
+
             ImGui.Begin("Light Settings");
 
             Vector3 color = (Vector3)dirLightColor;
@@ -452,6 +457,18 @@ internal class Program
             ImGui.DragFloat("Camera Sensitivity", ref cameraSensitivity, 0.2f, 0.2f, 10.0f);
 
             controller.Render();
+        }
+
+        // Fps
+        {
+            if (fpsSample.Count == 100)
+            {
+                fps = Convert.ToInt32(fpsSample.Average());
+
+                fpsSample.Clear();
+            }
+
+            fpsSample.Add(1.0d / obj);
         }
     }
 
