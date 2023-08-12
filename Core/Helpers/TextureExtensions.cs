@@ -14,6 +14,8 @@ public unsafe static class TextureExtensions
         image.ReadPixels(new SKImageInfo((int)texture.Size.X, (int)texture.Size.Y, SKColorType.Rgba8888), pboData, (int)texture.Size.X * 4, 0, 0);
 
         texture.FlushTexture();
+
+        image.Dispose();
     }
 
     public static void WriteColor(this Texture texture, Vector3D<float> color)

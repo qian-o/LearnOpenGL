@@ -37,6 +37,8 @@ internal class Program
     private static Cube[] pointLights = null!;
     private static Plane plane = null!;
     private static Cube[] cubes = null!;
+    private static Custom nanosuit = null!;
+    private static Custom backpack = null!;
     #endregion
 
     #region Colors
@@ -101,6 +103,8 @@ internal class Program
         pointLights = new Cube[10];
         plane = new Plane(gl);
         cubes = new Cube[10];
+        nanosuit = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nanosuit/nanosuit.obj"));
+        backpack = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backpack/backpack.obj"));
 
         for (int i = 0; i < pointLights.Length; i++)
         {
@@ -178,8 +182,6 @@ internal class Program
 
         gl.Enable(GLEnum.DepthTest);
         gl.ClearColor(Color.Black);
-
-        Custom custom = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nanosuit/nanosuit.obj"));
     }
 
     private static void Window_Update(double obj)
@@ -256,6 +258,9 @@ internal class Program
         {
             cubes[i].Transform = Matrix4X4.CreateTranslation(cubePositions[i]);
         }
+
+        nanosuit.Transform = Matrix4X4.CreateScale(0.5f) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 1.0f, -1.0f));
+        backpack.Transform = Matrix4X4.CreateScale(0.8f) * Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(180.0f)) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 6.3f, -2.65f));
     }
 
     private static void Window_Render(double obj)
@@ -400,6 +405,36 @@ internal class Program
                 lightingProgram.SetUniform("material.shininess", 64.0f);
 
                 cube.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
+            }
+
+            foreach (Mesh mesh in nanosuit.Meshes)
+            {
+                gl.ActiveTexture(TextureUnit.Texture0);
+                mesh.Diffuse.Enable();
+                gl.ActiveTexture(TextureUnit.Texture1);
+                mesh.Specular.Enable();
+
+                lightingProgram.SetUniform("model", nanosuit.Transform);
+                lightingProgram.SetUniform("material.diffuse", 0);
+                lightingProgram.SetUniform("material.specular", 1);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
+
+                mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
+            }
+
+            foreach (Mesh mesh in backpack.Meshes)
+            {
+                gl.ActiveTexture(TextureUnit.Texture0);
+                mesh.Diffuse.Enable();
+                gl.ActiveTexture(TextureUnit.Texture1);
+                mesh.Specular.Enable();
+
+                lightingProgram.SetUniform("model", backpack.Transform);
+                lightingProgram.SetUniform("material.diffuse", 0);
+                lightingProgram.SetUniform("material.specular", 1);
+                lightingProgram.SetUniform("material.shininess", 64.0f);
+
+                mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             lightingProgram.Disable();

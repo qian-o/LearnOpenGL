@@ -1,4 +1,5 @@
-﻿using Silk.NET.Maths;
+﻿using Silk.NET.Assimp;
+using Silk.NET.Maths;
 using Silk.NET.OpenGLES;
 using Silk.NET.OpenGLES.Extensions.EXT;
 
@@ -34,6 +35,8 @@ public unsafe class Texture : IDisposable
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)GLEnum.Linear);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)GLEnum.Repeat);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)GLEnum.Repeat);
+        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureBaseLevel, 0);
+        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMaxLevel, 8);
 
         _gl.BindTexture(GLEnum.Texture2D, 0);
     }

@@ -13,6 +13,30 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="backpack\ao.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\backpack.mtl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\backpack.obj">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\diffuse.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\normal.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\roughness.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\source_attribution.txt">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="backpack\specular.jpg">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="container2.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

@@ -4,7 +4,7 @@ namespace Core.Helpers;
 
 public unsafe class Mesh
 {
-    public uint VAO { get; }
+    private readonly GL _gl;
 
     public uint VBO { get; }
 
@@ -14,44 +14,42 @@ public unsafe class Mesh
 
     public uint IndexCount { get; }
 
-    public TextureInfo[] Textures { get; set; }
+    public Texture Diffuse { get; }
 
-    public Mesh(GL gl, Vertex[] vertices, uint[] indices, TextureInfo[] textures)
+    public Texture Specular { get; }
+
+    public Mesh(GL gl, Vertex[] vertices, uint[] indices, Texture diffuse, Texture specular)
     {
-        VertexCount = (uint)vertices.Length * 8;
-        IndexCount = (uint)indices.Length;
-        Textures = textures;
+        _gl = gl;
 
-        VAO = gl.GenVertexArray();
+        VertexCount = (uint)vertices.Length;
+        IndexCount = (uint)indices.Length;
+        Diffuse = diffuse;
+        Specular = specular;
+
         VBO = gl.GenBuffer();
         EBO = gl.GenBuffer();
 
-        gl.BindVertexArray(VAO);
-
         gl.BindBuffer(GLEnum.ArrayBuffer, VBO);
-        gl.BufferData(GLEnum.ArrayBuffer, VertexCount * sizeof(float), GetVertices(vertices), GLEnum.StaticDraw);
+        gl.BufferData(GLEnum.ArrayBuffer, VertexCount * 8 * sizeof(float), GetVertices(vertices), GLEnum.StaticDraw);
+        gl.BindBuffer(GLEnum.ArrayBuffer, 0);
 
         gl.BindBuffer(GLEnum.ElementArrayBuffer, EBO);
         gl.BufferData<uint>(GLEnum.ElementArrayBuffer, IndexCount * sizeof(uint), indices, GLEnum.StaticDraw);
-
-        gl.VertexAttribPointer(0, 3, GLEnum.Float, false, 8 * sizeof(float), (void*)0);
-        gl.EnableVertexAttribArray(0);
-
-        gl.VertexAttribPointer(1, 3, GLEnum.Float, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        gl.EnableVertexAttribArray(1);
-
-        gl.VertexAttribPointer(2, 2, GLEnum.Float, false, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        gl.EnableVertexAttribArray(2);
-
-        gl.BindBuffer(GLEnum.ArrayBuffer, 0);
-        gl.BindVertexArray(0);
+        gl.BindBuffer(GLEnum.ElementArrayBuffer, 0);
     }
 
-    public void Draw(GL gl)
+    public void Draw(uint positionAttrib, uint normalAttrib, uint texCoordsAttrib)
     {
-        gl.BindVertexArray(VAO);
-        gl.DrawElements(GLEnum.Triangles, IndexCount, GLEnum.UnsignedInt, (void*)0);
-        gl.BindVertexArray(0);
+        _gl.BindBuffer(GLEnum.ArrayBuffer, VBO);
+        _gl.VertexAttribPointer(positionAttrib, 3, GLEnum.Float, false, 8 * sizeof(float), (void*)0);
+        _gl.VertexAttribPointer(normalAttrib, 3, GLEnum.Float, false, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        _gl.VertexAttribPointer(texCoordsAttrib, 2, GLEnum.Float, false, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
+
+        _gl.BindBuffer(GLEnum.ElementArrayBuffer, EBO);
+        _gl.DrawElements(GLEnum.Triangles, VertexCount, GLEnum.UnsignedInt, (void*)0);
+        _gl.BindBuffer(GLEnum.ElementArrayBuffer, 0);
     }
 
     private float* GetVertices(Vertex[] vertices)
