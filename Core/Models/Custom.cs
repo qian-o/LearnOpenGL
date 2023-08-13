@@ -94,13 +94,13 @@ public unsafe class Custom : BaseModel
         if (diffuse == null)
         {
             diffuse = new CoreTexture(_gl, GLEnum.Rgba, GLEnum.UnsignedByte);
-            diffuse.WriteColor(new Vector3D<float>(1.0f));
+            diffuse.WriteColor(new Vector3D<float>(0.0f));
         }
 
         if (specular == null)
         {
             specular = new CoreTexture(_gl, GLEnum.Rgba, GLEnum.UnsignedByte);
-            specular.WriteColor(new Vector3D<float>(1.0f));
+            specular.WriteColor(new Vector3D<float>(0.0f));
         }
 
         return new CoreMesh(_gl, vertices.ToArray(), indices.ToArray(), diffuse, specular);

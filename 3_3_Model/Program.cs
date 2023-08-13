@@ -30,6 +30,7 @@ internal class Program
     private static IKeyboard keyboard = null!;
     private static bool firstMove = true;
     private static Vector2D<float> lastPos;
+    private static bool isLighting = false;
     #endregion
 
     #region Models
@@ -39,6 +40,8 @@ internal class Program
     private static Cube[] cubes = null!;
     private static Custom nanosuit = null!;
     private static Custom backpack = null!;
+    private static Custom kafka = null!;
+    private static Custom knife = null!;
     #endregion
 
     #region Colors
@@ -63,6 +66,8 @@ internal class Program
     private static ShaderProgram solidColorProgram = null!;
     // 场景内光照
     private static ShaderProgram lightingProgram = null!;
+    // 场景内无光照
+    private static ShaderProgram noLightingProgram = null!;
     #endregion
 
     #region Textures
@@ -105,6 +110,8 @@ internal class Program
         cubes = new Cube[10];
         nanosuit = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nanosuit/nanosuit.obj"));
         backpack = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backpack/backpack.obj"));
+        kafka = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "星穹铁道—卡芙卡无外套/kafka.obj"));
+        knife = new(gl, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "星穹铁道—卡芙卡无外套/knife.obj"));
 
         for (int i = 0; i < pointLights.Length; i++)
         {
@@ -161,12 +168,17 @@ internal class Program
         using Shader mvp = new(gl, GLEnum.VertexShader, File.ReadAllText("Shaders/mvp.vert"));
         using Shader solidColor = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/solidColor.frag"));
         using Shader lighting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/lighting.frag"), new (string, string)[] { ("#define NR_POINT_LIGHTS 1", $"#define NR_POINT_LIGHTS {pointLights.Length}") });
+        using Shader noLighting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/no_lighting.frag"));
 
         solidColorProgram = new ShaderProgram(gl);
         solidColorProgram.Attach(mvp, solidColor);
 
         lightingProgram = new ShaderProgram(gl);
         lightingProgram.Attach(mvp, lighting);
+
+        noLightingProgram = new ShaderProgram(gl);
+        noLightingProgram.Attach(mvp, noLighting);
+
 
         planeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
         planeDiffuseMap.WriteImage("wood_floor.jpg");
@@ -259,8 +271,10 @@ internal class Program
             cubes[i].Transform = Matrix4X4.CreateTranslation(cubePositions[i]);
         }
 
-        nanosuit.Transform = Matrix4X4.CreateScale(0.5f) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 1.0f, -1.0f));
-        backpack.Transform = Matrix4X4.CreateScale(0.8f) * Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(180.0f)) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 6.3f, -2.65f));
+        nanosuit.Transform = Matrix4X4.CreateScale(0.5f) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 0.0f, -10.0f));
+        backpack.Transform = Matrix4X4.CreateScale(0.8f) * Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(180.0f)) * Matrix4X4.CreateTranslation(new Vector3D<float>(1.0f, 5.3f, -11.65f));
+        kafka.Transform = Matrix4X4.CreateTranslation(new Vector3D<float>(10.0f, 0.0f, 0.0f));
+        knife.Transform = Matrix4X4.CreateTranslation(new Vector3D<float>(12.0f, 0.0f, 0.0f));
     }
 
     private static void Window_Render(double obj)
@@ -323,86 +337,99 @@ internal class Program
             gl.ActiveTexture(TextureUnit.Texture3);
             cubeSpecularMap.Enable();
 
-            uint positionAttrib = (uint)lightingProgram.GetAttrib("position");
-            uint normalAttrib = (uint)lightingProgram.GetAttrib("normal");
-            uint texCoordsAttrib = (uint)lightingProgram.GetAttrib("texCoords");
+            ShaderProgram useProgram = isLighting ? lightingProgram : noLightingProgram;
+
+            uint positionAttrib = (uint)useProgram.GetAttrib("position");
+            uint normalAttrib = (uint)useProgram.GetAttrib("normal");
+            uint texCoordsAttrib = (uint)useProgram.GetAttrib("texCoords");
 
             gl.EnableVertexAttribArray(positionAttrib);
             gl.EnableVertexAttribArray(normalAttrib);
             gl.EnableVertexAttribArray(texCoordsAttrib);
 
-            lightingProgram.Enable();
+            useProgram.Enable();
 
-            lightingProgram.SetUniform("view", camera.View);
-            lightingProgram.SetUniform("projection", camera.Projection);
+            useProgram.SetUniform("view", camera.View);
+            useProgram.SetUniform("projection", camera.Projection);
 
-            lightingProgram.SetUniform("viewPos", camera.Position);
-
-            // 定向光 Uniform
+            if (isLighting)
             {
-                Vector3D<float> diffuseColor = dirLightColor * new Vector3D<float>(0.5f, 0.5f, 0.5f);
-                Vector3D<float> ambientColor = diffuseColor * new Vector3D<float>(0.2f, 0.2f, 0.2f);
+                useProgram.SetUniform("viewPos", camera.Position);
 
-                lightingProgram.SetUniform("dirLight.direction", dirLightDirection);
-
-                lightingProgram.SetUniform("dirLight.ambient", ambientColor);
-                lightingProgram.SetUniform("dirLight.diffuse", diffuseColor);
-                lightingProgram.SetUniform("dirLight.specular", dirLightColor);
-            }
-
-            // 点光源 Uniform
-            {
-                for (int i = 0; i < pointLights.Length; i++)
+                // 定向光 Uniform
                 {
-                    Vector3D<float> light = pointLightColors[i];
-
-                    Vector3D<float> diffuseColor = light * new Vector3D<float>(0.5f, 0.5f, 0.5f);
+                    Vector3D<float> diffuseColor = dirLightColor * new Vector3D<float>(0.5f, 0.5f, 0.5f);
                     Vector3D<float> ambientColor = diffuseColor * new Vector3D<float>(0.2f, 0.2f, 0.2f);
 
-                    lightingProgram.SetUniform("pointLights[" + i + "].position", pointLightPositions[i]);
+                    useProgram.SetUniform("dirLight.direction", dirLightDirection);
 
-                    lightingProgram.SetUniform("pointLights[" + i + "].constant", 1.0f);
-                    lightingProgram.SetUniform("pointLights[" + i + "].linear", 0.09f);
-                    lightingProgram.SetUniform("pointLights[" + i + "].quadratic", 0.032f);
-
-                    lightingProgram.SetUniform("pointLights[" + i + "].ambient", ambientColor);
-                    lightingProgram.SetUniform("pointLights[" + i + "].diffuse", diffuseColor);
-                    lightingProgram.SetUniform("pointLights[" + i + "].specular", light);
+                    useProgram.SetUniform("dirLight.ambient", ambientColor);
+                    useProgram.SetUniform("dirLight.diffuse", diffuseColor);
+                    useProgram.SetUniform("dirLight.specular", dirLightColor);
                 }
-            }
 
-            // 聚光灯 Uniform
-            {
-                lightingProgram.SetUniform("spotLight.position", camera.Position);
-                lightingProgram.SetUniform("spotLight.direction", camera.Front);
-                lightingProgram.SetUniform("spotLight.cutOff", MathHelper.Cos(MathHelper.DegreesToRadians(12.5f)));
-                lightingProgram.SetUniform("spotLight.outerCutOff", MathHelper.Cos(MathHelper.DegreesToRadians(17.5f)));
+                // 点光源 Uniform
+                {
+                    for (int i = 0; i < pointLights.Length; i++)
+                    {
+                        Vector3D<float> light = pointLightColors[i];
 
-                lightingProgram.SetUniform("spotLight.constant", 1.0f);
-                lightingProgram.SetUniform("spotLight.linear", 0.09f);
-                lightingProgram.SetUniform("spotLight.quadratic", 0.032f);
+                        Vector3D<float> diffuseColor = light * new Vector3D<float>(0.5f, 0.5f, 0.5f);
+                        Vector3D<float> ambientColor = diffuseColor * new Vector3D<float>(0.2f, 0.2f, 0.2f);
 
-                lightingProgram.SetUniform("spotLight.ambient", new Vector3D<float>(0.0f));
-                lightingProgram.SetUniform("spotLight.diffuse", new Vector3D<float>(1.0f));
-                lightingProgram.SetUniform("spotLight.specular", new Vector3D<float>(1.0f));
+                        useProgram.SetUniform("pointLights[" + i + "].position", pointLightPositions[i]);
+
+                        useProgram.SetUniform("pointLights[" + i + "].constant", 1.0f);
+                        useProgram.SetUniform("pointLights[" + i + "].linear", 0.09f);
+                        useProgram.SetUniform("pointLights[" + i + "].quadratic", 0.032f);
+
+                        useProgram.SetUniform("pointLights[" + i + "].ambient", ambientColor);
+                        useProgram.SetUniform("pointLights[" + i + "].diffuse", diffuseColor);
+                        useProgram.SetUniform("pointLights[" + i + "].specular", light);
+                    }
+                }
+
+                // 聚光灯 Uniform
+                {
+                    useProgram.SetUniform("spotLight.position", camera.Position);
+                    useProgram.SetUniform("spotLight.direction", camera.Front);
+                    useProgram.SetUniform("spotLight.cutOff", MathHelper.Cos(MathHelper.DegreesToRadians(12.5f)));
+                    useProgram.SetUniform("spotLight.outerCutOff", MathHelper.Cos(MathHelper.DegreesToRadians(17.5f)));
+
+                    useProgram.SetUniform("spotLight.constant", 1.0f);
+                    useProgram.SetUniform("spotLight.linear", 0.09f);
+                    useProgram.SetUniform("spotLight.quadratic", 0.032f);
+
+                    useProgram.SetUniform("spotLight.ambient", new Vector3D<float>(0.0f));
+                    useProgram.SetUniform("spotLight.diffuse", new Vector3D<float>(1.0f));
+                    useProgram.SetUniform("spotLight.specular", new Vector3D<float>(1.0f));
+                }
             }
 
             // 地板
             {
-                lightingProgram.SetUniform("model", plane.Transform);
-                lightingProgram.SetUniform("material.diffuse", 0);
-                lightingProgram.SetUniform("material.specular", 1);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
+                useProgram.SetUniform("model", plane.Transform);
+                useProgram.SetUniform("material.diffuse", 0);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 1);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
 
                 plane.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
             foreach (Cube cube in cubes)
             {
-                lightingProgram.SetUniform("model", cube.Transform);
-                lightingProgram.SetUniform("material.diffuse", 2);
-                lightingProgram.SetUniform("material.specular", 3);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
+                useProgram.SetUniform("model", cube.Transform);
+                useProgram.SetUniform("material.diffuse", 2);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 3);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
 
                 cube.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
@@ -414,10 +441,14 @@ internal class Program
                 gl.ActiveTexture(TextureUnit.Texture1);
                 mesh.Specular.Enable();
 
-                lightingProgram.SetUniform("model", nanosuit.Transform);
-                lightingProgram.SetUniform("material.diffuse", 0);
-                lightingProgram.SetUniform("material.specular", 1);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
+                useProgram.SetUniform("model", nanosuit.Transform);
+                useProgram.SetUniform("material.diffuse", 0);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 1);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
 
                 mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
@@ -429,15 +460,57 @@ internal class Program
                 gl.ActiveTexture(TextureUnit.Texture1);
                 mesh.Specular.Enable();
 
-                lightingProgram.SetUniform("model", backpack.Transform);
-                lightingProgram.SetUniform("material.diffuse", 0);
-                lightingProgram.SetUniform("material.specular", 1);
-                lightingProgram.SetUniform("material.shininess", 64.0f);
+                useProgram.SetUniform("model", backpack.Transform);
+                useProgram.SetUniform("material.diffuse", 0);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 1);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
 
                 mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
             }
 
-            lightingProgram.Disable();
+            foreach (Mesh mesh in kafka.Meshes)
+            {
+                gl.ActiveTexture(TextureUnit.Texture0);
+                mesh.Diffuse.Enable();
+                gl.ActiveTexture(TextureUnit.Texture1);
+                mesh.Specular.Enable();
+
+                useProgram.SetUniform("model", kafka.Transform);
+                useProgram.SetUniform("material.diffuse", 0);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 1);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
+
+                mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
+            }
+
+            foreach (Mesh mesh in knife.Meshes)
+            {
+                gl.ActiveTexture(TextureUnit.Texture0);
+                mesh.Diffuse.Enable();
+                gl.ActiveTexture(TextureUnit.Texture1);
+                mesh.Specular.Enable();
+
+                useProgram.SetUniform("model", knife.Transform);
+                useProgram.SetUniform("material.diffuse", 0);
+
+                if (isLighting)
+                {
+                    useProgram.SetUniform("material.specular", 1);
+                    useProgram.SetUniform("material.shininess", 64.0f);
+                }
+
+                mesh.Draw(positionAttrib, normalAttrib, texCoordsAttrib);
+            }
+
+            useProgram.Disable();
 
             gl.DisableVertexAttribArray(normalAttrib);
             gl.DisableVertexAttribArray(positionAttrib);
@@ -456,6 +529,8 @@ internal class Program
             ImGui.GetBackgroundDrawList().AddText(new Vector2(0, 0), ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.0f, 1.0f)), fps.ToString());
 
             ImGui.Begin("Light Settings");
+
+            ImGui.Checkbox("Use Light", ref isLighting);
 
             Vector3 color = (Vector3)dirLightColor;
             ImGui.ColorEdit3("Dir Light Color", ref color);
@@ -514,8 +589,6 @@ internal class Program
 
     private static void Window_Closing()
     {
-        lightingProgram.Dispose();
-
         controller.Dispose();
         inputContext.Dispose();
 

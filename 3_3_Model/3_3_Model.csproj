@@ -106,6 +106,9 @@
 		<None Update="nanosuit\nanosuit.obj">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Shaders\no_lighting.frag">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Shaders\lighting.frag">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -117,6 +120,66 @@
 		</None>
 		<None Update="wood_floor.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\kafka.mtl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\kafka.obj">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\knife.mtl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\knife.obj">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\mc1.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\mc3.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\toon2.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\toon3.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\使用规则.txt">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\刀.pmx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\卡芙卡3.0.pmx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\外套.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\头发.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\子弹.pmx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\枪白.pmx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\枪黑.pmx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\武器.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\脸.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\衣服.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="星穹铁道—卡芙卡无外套\表情.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
