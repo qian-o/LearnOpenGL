@@ -31,6 +31,7 @@ internal class Program
     private static bool firstMove = true;
     private static Vector2D<float> lastPos;
     private static bool isLighting = false;
+    private static bool isDepthTesting = false;
     #endregion
 
     #region Models
@@ -69,7 +70,7 @@ internal class Program
     // 场景内无光照
     private static ShaderProgram noLightingProgram = null!;
     // 深度测试
-    private static ShaderProgram deepTestingProgram = null!;
+    private static ShaderProgram depthTestingProgram = null!;
     #endregion
 
     #region Textures
@@ -171,7 +172,7 @@ internal class Program
         using Shader solidColor = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/solid_color.frag"));
         using Shader lighting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/lighting.frag"), new (string, string)[] { ("#define NR_POINT_LIGHTS 1", $"#define NR_POINT_LIGHTS {pointLights.Length}") });
         using Shader noLighting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/no_lighting.frag"));
-        using Shader deepTesting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/depth_testing.frag"));
+        using Shader depthTesting = new(gl, GLEnum.FragmentShader, File.ReadAllText("Shaders/depth_testing.frag"));
 
         solidColorProgram = new ShaderProgram(gl);
         solidColorProgram.Attach(mvp, solidColor);
@@ -182,8 +183,8 @@ internal class Program
         noLightingProgram = new ShaderProgram(gl);
         noLightingProgram.Attach(mvp, noLighting);
 
-        deepTestingProgram = new ShaderProgram(gl);
-        deepTestingProgram.Attach(mvp, deepTesting);
+        depthTestingProgram = new ShaderProgram(gl);
+        depthTestingProgram.Attach(mvp, depthTesting);
 
         planeDiffuseMap = new Texture(gl, GLEnum.Rgba, GLEnum.UnsignedByte);
         planeDiffuseMap.WriteImage("wood_floor.jpg");
@@ -286,49 +287,52 @@ internal class Program
     {
         gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-        // 定向光
+        if (!isDepthTesting)
         {
-            uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
-
-            gl.EnableVertexAttribArray(positionAttrib);
-
-            solidColorProgram.Enable();
-
-            solidColorProgram.SetUniform("model", dirLight.Transform);
-            solidColorProgram.SetUniform("view", camera.View);
-            solidColorProgram.SetUniform("projection", camera.Projection);
-
-            solidColorProgram.SetUniform("color", dirLightColor);
-
-            dirLight.Draw(positionAttrib);
-
-            solidColorProgram.Disable();
-
-            gl.DisableVertexAttribArray(positionAttrib);
-        }
-
-        // 点光源
-        {
-            uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
-
-            gl.EnableVertexAttribArray(positionAttrib);
-
-            solidColorProgram.Enable();
-
-            for (int i = 0; i < pointLights.Length; i++)
+            // 定向光
             {
-                solidColorProgram.SetUniform("model", pointLights[i].Transform);
+                uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
+
+                gl.EnableVertexAttribArray(positionAttrib);
+
+                solidColorProgram.Enable();
+
+                solidColorProgram.SetUniform("model", dirLight.Transform);
                 solidColorProgram.SetUniform("view", camera.View);
                 solidColorProgram.SetUniform("projection", camera.Projection);
 
-                solidColorProgram.SetUniform("color", pointLightColors[i]);
+                solidColorProgram.SetUniform("color", dirLightColor);
 
-                pointLights[i].Draw(positionAttrib);
+                dirLight.Draw(positionAttrib);
+
+                solidColorProgram.Disable();
+
+                gl.DisableVertexAttribArray(positionAttrib);
             }
 
-            solidColorProgram.Disable();
+            // 点光源
+            {
+                uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
 
-            gl.DisableVertexAttribArray(positionAttrib);
+                gl.EnableVertexAttribArray(positionAttrib);
+
+                solidColorProgram.Enable();
+
+                for (int i = 0; i < pointLights.Length; i++)
+                {
+                    solidColorProgram.SetUniform("model", pointLights[i].Transform);
+                    solidColorProgram.SetUniform("view", camera.View);
+                    solidColorProgram.SetUniform("projection", camera.Projection);
+
+                    solidColorProgram.SetUniform("color", pointLightColors[i]);
+
+                    pointLights[i].Draw(positionAttrib);
+                }
+
+                solidColorProgram.Disable();
+
+                gl.DisableVertexAttribArray(positionAttrib);
+            }
         }
 
         // 场景内物体
@@ -343,6 +347,7 @@ internal class Program
             cubeSpecularMap.Enable();
 
             ShaderProgram useProgram = isLighting ? lightingProgram : noLightingProgram;
+            useProgram = isDepthTesting ? depthTestingProgram : useProgram;
 
             uint positionAttrib = (uint)useProgram.GetAttrib("position");
             uint normalAttrib = (uint)useProgram.GetAttrib("normal");
@@ -414,7 +419,11 @@ internal class Program
             // 地板
             {
                 useProgram.SetUniform("model", plane.Transform);
-                useProgram.SetUniform("material.diffuse", 0);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 0);
+                }
 
                 if (isLighting)
                 {
@@ -428,7 +437,11 @@ internal class Program
             foreach (Cube cube in cubes)
             {
                 useProgram.SetUniform("model", cube.Transform);
-                useProgram.SetUniform("material.diffuse", 2);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 2);
+                }
 
                 if (isLighting)
                 {
@@ -447,7 +460,11 @@ internal class Program
                 mesh.Specular.Enable();
 
                 useProgram.SetUniform("model", nanosuit.Transform);
-                useProgram.SetUniform("material.diffuse", 0);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 0);
+                }
 
                 if (isLighting)
                 {
@@ -466,7 +483,11 @@ internal class Program
                 mesh.Specular.Enable();
 
                 useProgram.SetUniform("model", backpack.Transform);
-                useProgram.SetUniform("material.diffuse", 0);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 0);
+                }
 
                 if (isLighting)
                 {
@@ -485,7 +506,11 @@ internal class Program
                 mesh.Specular.Enable();
 
                 useProgram.SetUniform("model", kafka.Transform);
-                useProgram.SetUniform("material.diffuse", 0);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 0);
+                }
 
                 if (isLighting)
                 {
@@ -504,7 +529,11 @@ internal class Program
                 mesh.Specular.Enable();
 
                 useProgram.SetUniform("model", knife.Transform);
-                useProgram.SetUniform("material.diffuse", 0);
+
+                if (!isDepthTesting)
+                {
+                    useProgram.SetUniform("material.diffuse", 0);
+                }
 
                 if (isLighting)
                 {
@@ -533,9 +562,19 @@ internal class Program
 
             ImGui.GetBackgroundDrawList().AddText(new Vector2(0, 0), ImGui.GetColorU32(new Vector4(0.0f, 1.0f, 0.0f, 1.0f)), fps.ToString());
 
-            ImGui.Begin("Light Settings");
+            ImGui.Begin("Scene Settings");
 
             ImGui.Checkbox("Use Light", ref isLighting);
+            if (isLighting && isDepthTesting)
+            {
+                isDepthTesting = false;
+            }
+
+            ImGui.Checkbox("Use Depth Test", ref isDepthTesting);
+            if (isDepthTesting && isLighting)
+            {
+                isLighting = false;
+            }
 
             Vector3 color = (Vector3)dirLightColor;
             ImGui.ColorEdit3("Dir Light Color", ref color);
