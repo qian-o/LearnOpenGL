@@ -3,7 +3,6 @@ using Core.Models;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGLES;
-using Silk.NET.OpenGLES.Extensions.ImGui;
 using Silk.NET.Windowing;
 using System.Drawing;
 using Shader = Core.Helpers.Shader;
@@ -13,14 +12,10 @@ namespace Examples;
 
 internal class Program
 {
-    private static readonly List<double> fpsSample = new();
-
     private static IWindow window = null!;
     private static GL gl = null!;
     private static IInputContext inputContext = null!;
-    private static ImGuiController controller = null!;
     private static Camera camera = null!;
-    private static int fps;
 
     #region Input
     private static IMouse mouse = null!;
@@ -38,8 +33,8 @@ internal class Program
     #endregion
 
     #region Speeds
-    private static float cameraSpeed = 4.0f;
-    private static float cameraSensitivity = 0.2f;
+    private static readonly float cameraSpeed = 4.0f;
+    private static readonly float cameraSensitivity = 0.2f;
     #endregion
 
     #region Programs
@@ -69,7 +64,8 @@ internal class Program
 
     private static void Window_Load()
     {
-        controller = new ImGuiController(gl = window.CreateOpenGLES(), window, inputContext = window.CreateInput());
+        gl = window.CreateOpenGLES();
+        inputContext = window.CreateInput();
         camera = new Camera
         {
             Position = new Vector3D<float>(0.0f, 2.0f, 3.0f),
@@ -114,8 +110,10 @@ internal class Program
         cubeDiffuseMap.WriteImage("container2.png");
 
         gl.Enable(GLEnum.DepthTest);
+
         gl.Enable(GLEnum.StencilTest);
         gl.StencilOp(GLEnum.Keep, GLEnum.Keep, GLEnum.Replace);
+
         gl.ClearColor(Color.Black);
     }
 
@@ -188,7 +186,74 @@ internal class Program
 
     private static void Window_Render(double obj)
     {
+        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
+        // 物体
+        {
+            gl.StencilFunc(GLEnum.Always, 1, 0xFF);
+            gl.StencilMask(0xFF);
+
+            textureProgram.Enable();
+
+            textureProgram.SetUniform("view", camera.View);
+            textureProgram.SetUniform("projection", camera.Projection);
+
+            uint positionAttrib = (uint)textureProgram.GetAttrib("position");
+            uint texCoordsAttrib = (uint)textureProgram.GetAttrib("texCoords");
+
+            gl.EnableVertexAttribArray(positionAttrib);
+            gl.EnableVertexAttribArray(texCoordsAttrib);
+
+            gl.ActiveTexture(GLEnum.Texture0);
+            cubeDiffuseMap.Enable();
+
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                textureProgram.SetUniform("model", cubes[i].Transform);
+
+                textureProgram.SetUniform("diffuse", 0);
+
+                cubes[i].Draw(positionAttrib, null, texCoordsAttrib);
+            }
+
+            gl.DisableVertexAttribArray(positionAttrib);
+            gl.DisableVertexAttribArray(texCoordsAttrib);
+
+            cubeDiffuseMap.Disable();
+
+            textureProgram.Disable();
+        }
+
+        // 边框
+        {
+            gl.StencilFunc(GLEnum.Notequal, 1, 0xFF);
+            gl.StencilMask(0x00);
+
+            solidColorProgram.Enable();
+
+            solidColorProgram.SetUniform("view", camera.View);
+            solidColorProgram.SetUniform("projection", camera.Projection);
+
+            solidColorProgram.SetUniform("color", new Vector3D<float>(0.04f, 0.28f, 0.26f));
+
+            uint positionAttrib = (uint)solidColorProgram.GetAttrib("position");
+
+            gl.EnableVertexAttribArray(positionAttrib);
+
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                solidColorProgram.SetUniform("model", Matrix4X4.CreateScale(1.05f) * cubes[i].Transform);
+
+                cubes[i].Draw(positionAttrib);
+            }
+
+            gl.DisableVertexAttribArray(positionAttrib);
+
+            solidColorProgram.Disable();
+
+            gl.StencilMask(0xFF);
+            gl.StencilFunc(GLEnum.Always, 0, 0xFF);
+        }
     }
 
     private static void Window_FramebufferResize(Vector2D<int> obj)
