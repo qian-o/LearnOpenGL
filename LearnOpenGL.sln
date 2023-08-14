@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "2_6_MultipleLights", "2_6_M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "3_3_Model", "3_3_Model\3_3_Model.csproj", "{F59A3523-3F2F-420C-A51B-C48192276C51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4_1_DepthTesting", "4_1_DepthTesting\4_1_DepthTesting.csproj", "{78F28B85-8A39-4F1D-A8F3-F837154267C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4_1_DepthTesting", "4_1_DepthTesting\4_1_DepthTesting.csproj", "{78F28B85-8A39-4F1D-A8F3-F837154267C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4_2_StencilTesting", "4_2_StencilTesting\4_2_StencilTesting.csproj", "{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4_2_StencilTesting", "4_2_StencilTesting\4_2_StencilTesting.csproj", "{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4_3_Blending", "4_3_Blending\4_3_Blending.csproj", "{E3FE3069-E61F-4820-965A-8D3BF08D2840}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3FE3069-E61F-4820-965A-8D3BF08D2840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3FE3069-E61F-4820-965A-8D3BF08D2840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3FE3069-E61F-4820-965A-8D3BF08D2840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3FE3069-E61F-4820-965A-8D3BF08D2840}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{F59A3523-3F2F-420C-A51B-C48192276C51} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{78F28B85-8A39-4F1D-A8F3-F837154267C8} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 		{D1BEC77C-2BED-4EE5-A6ED-8589342CDC5C} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
+		{E3FE3069-E61F-4820-965A-8D3BF08D2840} = {CAC9FAEA-CEF7-4C1C-96C3-25D5484EE0C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E82C825C-063E-4E06-A5FC-99496817EB42}

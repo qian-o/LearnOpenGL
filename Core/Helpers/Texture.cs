@@ -17,7 +17,7 @@ public unsafe class Texture : IDisposable
 
     public Vector2D<uint> Size { get; private set; }
 
-    public Texture(GL gl, GLEnum format, GLEnum type)
+    public Texture(GL gl, GLEnum format, GLEnum type, GLEnum wrap = GLEnum.Repeat)
     {
         _gl = gl;
         _format = format;
@@ -33,8 +33,8 @@ public unsafe class Texture : IDisposable
         _gl.TexParameter(GLEnum.Texture2D, (GLEnum)EXT.MaxTextureMaxAnisotropyExt, maxAnisotropy);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.LinearMipmapLinear);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)GLEnum.Linear);
-        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)GLEnum.Repeat);
-        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)GLEnum.Repeat);
+        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)wrap);
+        _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)wrap);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureBaseLevel, 0);
         _gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMaxLevel, 8);
 

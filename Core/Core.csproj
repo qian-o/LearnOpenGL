@@ -50,6 +50,9 @@
 		<None Update="container2_specular.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="grass.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="nanosuit\arm_dif.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -112,6 +115,9 @@
 		</None>
 		<None Update="nanosuit\nanosuit.obj">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="window.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="wood_floor.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
