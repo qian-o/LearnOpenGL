@@ -13,12 +13,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="container2.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="container2_specular.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="Shaders\lighting.frag">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -26,9 +20,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Shaders\solidColor.frag">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="wood_floor.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
