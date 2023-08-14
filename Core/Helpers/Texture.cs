@@ -1,5 +1,4 @@
-﻿using Silk.NET.Assimp;
-using Silk.NET.Maths;
+﻿using Silk.NET.Maths;
 using Silk.NET.OpenGLES;
 using Silk.NET.OpenGLES.Extensions.EXT;
 

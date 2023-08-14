@@ -6,12 +6,8 @@ in vec2 TexCoords;
 
 out vec4 FragColor;
 
-uniform sampler2D diffuse;
+uniform sampler2D tex;
 
 void main() {
-    vec4 texColor = vec4(texture(diffuse, TexCoords));
-    if(texColor.a < 0.1) {
-        discard;
-    }
-    FragColor = texColor;
+    FragColor = vec4(texture(tex, TexCoords));
 }
