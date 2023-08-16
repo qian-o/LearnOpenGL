@@ -47,13 +47,11 @@ public unsafe class Texture : IDisposable
         uint dataSize = Size.X * Size.Y * 4;
 
         _gl.BindBuffer(GLEnum.PixelUnpackBuffer, PboId);
-        _gl.BindTexture(GLEnum.Texture2D, TextureId);
 
         _gl.BufferData(GLEnum.PixelUnpackBuffer, dataSize, null, GLEnum.StreamDraw);
 
-        pboData = (nint)_gl.MapBufferRange(GLEnum.PixelUnpackBuffer, 0, dataSize, (uint)(GLEnum.MapReadBit | GLEnum.MapWriteBit));
+        pboData = (nint)_gl.MapBufferRange(GLEnum.PixelUnpackBuffer, 0, dataSize, (uint)GLEnum.MapWriteBit);
 
-        _gl.BindTexture(GLEnum.Texture2D, 0);
         _gl.BindBuffer(GLEnum.PixelUnpackBuffer, 0);
     }
 

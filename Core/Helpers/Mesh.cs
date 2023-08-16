@@ -31,7 +31,7 @@ public unsafe class Mesh
         EBO = gl.GenBuffer();
 
         gl.BindBuffer(GLEnum.ArrayBuffer, VBO);
-        gl.BufferData(GLEnum.ArrayBuffer, VertexCount * 8 * sizeof(float), GetVertices(vertices), GLEnum.StaticDraw);
+        gl.BufferData<Vertex>(GLEnum.ArrayBuffer, VertexCount * (uint)sizeof(Vertex), vertices, GLEnum.StaticDraw);
         gl.BindBuffer(GLEnum.ArrayBuffer, 0);
 
         gl.BindBuffer(GLEnum.ElementArrayBuffer, EBO);
