@@ -48,7 +48,7 @@ public unsafe class Mesh
         _gl.BindBuffer(GLEnum.ArrayBuffer, 0);
 
         _gl.BindBuffer(GLEnum.ElementArrayBuffer, EBO);
-        _gl.DrawElements(GLEnum.Triangles, VertexCount, GLEnum.UnsignedInt, (void*)0);
+        _gl.DrawElements(GLEnum.Triangles, IndexCount, GLEnum.UnsignedInt, (void*)0);
         _gl.BindBuffer(GLEnum.ElementArrayBuffer, 0);
     }
 

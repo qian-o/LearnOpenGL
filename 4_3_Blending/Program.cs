@@ -247,6 +247,8 @@ internal class Program
             planeMap.Disable();
         }
 
+        gl.Disable(GLEnum.DepthTest);
+
         // Grass
         {
             for (int i = 0; i < grasses.Length; i++)
@@ -276,6 +278,8 @@ internal class Program
                 windowMap.Disable();
             }
         }
+
+        gl.Enable(GLEnum.DepthTest);
 
         gl.DisableVertexAttribArray(texCoordsAttrib);
         gl.DisableVertexAttribArray(positionAttrib);
